@@ -1,0 +1,37 @@
+//https://www.youtube.com/watch?v=5iHyLRzh3vI&t=388s&ab_channel=ThizerAplicativos
+import 'package:sqflite/sqflite.dart';
+import 'package:bestiario_tormenta/application.dart';
+
+
+abstract class BestModel {
+  Database _db;
+  String get dbname;
+  int get dbversion;
+
+  Future<Database>init() async{
+    if (_db == null){
+      var databasesPath = await getDatabasesPath();
+      String path = databasesPath+dbname;
+
+      //Delete Database
+      //await deleteDatabase(path);
+
+      _db = await openDatabase(
+          path,
+          version: dbversion,
+          onCreate: (Database db, int version) async{
+            dbCreate.forEach((String sql) async{
+              await db.execute(sql);
+            });
+      });
+
+    }
+    return _db;
+  }
+
+  Future<Database> getDb() async{
+    return await.init();
+  }
+
+
+}
